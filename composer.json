@@ -1,0 +1,25 @@
+{
+    "name": "at/resource-access",
+    "type": "symfony-bundle",
+    "description": "Symfony ATResourceAccessBundle",
+    "keywords": ["Resource access"],
+    "authors": [
+        {
+            "name": "Theodor Diaconu",
+            "email": "diaconu.theodor@gmail.com"
+        },
+        {
+            "name": "Alexandru Miron",
+            "email": "beliveyourdream@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require" : {
+        "php": ">=5.4",
+        "symfony/framework-bundle": "~2.2"
+    },
+    "autoload": {
+        "psr-0": { "AT\\ResourceAccessBundle": "" }
+    },
+    "target-dir": "AT/ResourceAccessBundle"
+}

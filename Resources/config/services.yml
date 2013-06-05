@@ -1,0 +1,4 @@
+services:
+    at_resource_access.resource_access_manager:
+        class: AT\ResourceAccessBundle\Manager\ResourceAccessManager
+        arguments: [ @doctrine.orm.entity_manager ]
