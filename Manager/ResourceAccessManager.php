@@ -1,10 +1,10 @@
 <?php
 
-namespace AB\ReviewBundle\Manager;
+namespace AT\ResourceAccessBundle\Manager;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\Exception\Exception;
-use AB\ReviewBundle\Repository\ResourceAccessRepository;
+use AT\ResourceAccessBundle\Repository\ResourceAccessRepository;
 use AT\ResourceAccessBundle\Model\RequesterInterface;
 use AT\ResourceAccessBundle\Model\ResourceInterface;
 use AT\ResourceAccessBundle\Entity\ResourceAccess;
@@ -19,7 +19,7 @@ class ResourceAccessManager
     public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository("ATResourceAccessBundle:Repository");
+        $this->repository = $entityManager->getRepository("ATResourceAccessBundle:ResourceAccess");
     }
 
     public function flush()

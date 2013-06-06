@@ -5,7 +5,7 @@
  * @author Alexandru Miron <beliveyourdream@gmail.com>
  */
 
-namespace AB\ReviewBundle\Repository;
+namespace AT\ResourceAccessBundle\Repository;
 
 use AT\ResourceAccessBundle\Model\RequesterInterface;
 use AT\ResourceAccessBundle\Model\ResourceInterface;

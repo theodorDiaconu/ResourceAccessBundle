@@ -32,7 +32,7 @@ class ResourceAccess
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Resource", inversedBy="resourceAccesses")
+     * @ORM\ManyToOne(targetEntity="Resource", inversedBy="resourceAccesses", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="resource_id", referencedColumnName="id", nullable=false)
      */
     protected $resource;
@@ -127,7 +127,7 @@ class ResourceAccess
      *
      * @return $this
      */
-    public function setGrantedBy(RequesterInterface $requester)
+    public function setGrantedBy($requester)
     {
         $this->grantedBy = $requester;
 
