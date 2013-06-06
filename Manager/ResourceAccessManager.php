@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @author Theodor Diaconu <diaconu.theodor@gmail.com>
+ * @author Alexandru Miron <beliveyourdream@gmail.com>
+ */
+
 namespace AT\ResourceAccessBundle\Manager;
 
 use Doctrine\ORM\EntityManager;
@@ -77,14 +82,16 @@ class ResourceAccessManager
      * Checks if User has specified access level for resource
      *
      * @param RequesterInterface $requester
-     * @param ResourceInterface $resource
+     * @param ResourceInterface $customResource
      * @param integer $accessLevel
      *
      * @return boolean
      * @throws \Exception
      */
-    public function isGranted(RequesterInterface $requester, ResourceInterface $resource, $accessLevel)
+    public function isGranted(RequesterInterface $requester, ResourceInterface $customResource, $accessLevel)
     {
+        $resource = $customResource->getResource();
+
         if (!in_array($accessLevel, ResourceAccess::$validAccesses)) {
             throw(new \Exception("Invalid access level " . $accessLevel));
         }
@@ -93,11 +100,11 @@ class ResourceAccessManager
 
         if (null === $access) {
             return false;
-        } elseif ($access == CampaignAccess::ACCESS_ADMIN) {
+        } elseif ($access == ResourceAccess::ACCESS_ADMIN) {
             return true;
-        } elseif ($access == CampaignAccess::ACCESS_EDIT && $accessLevel >= CampaignAccess::ACCESS_EDIT ) {
+        } elseif ($access == ResourceAccess::ACCESS_EDIT && $accessLevel >= ResourceAccess::ACCESS_EDIT ) {
             return true;
-        } elseif ($access == CampaignAccess::ACCESS_READ && $accessLevel === CampaignAccess::ACCESS_READ) {
+        } elseif ($access == ResourceAccess::ACCESS_READ && $accessLevel === ResourceAccess::ACCESS_READ) {
             return true;
         } else {
             return false;
@@ -118,11 +125,11 @@ class ResourceAccessManager
     {
         $resource = $customResource->getResource();
 
-        if (null !== $grantedBy && !$this->isGranted($grantedBy, $resource, CampaignAccess::ACCESS_ADMIN)) {
+        if (null !== $grantedBy && !$this->isGranted($grantedBy, $resource, ResourceAccess::ACCESS_ADMIN)) {
             throw(new \Exception('The user with id ' . $requester->getId() . ' is not allowed to grant access'));
         }
 
-        /** @var CampaignAccess $campaignAccess */
+        /** @var ResourceAccess $resourceAccess */
         $resourceAccess = $this->repository->findOneBy(['requester' => $requester, 'resource' => $resource]);
 
         if (null === $resourceAccess) {

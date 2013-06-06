@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit bootstrap="./Tests/bootstrap.php" colors="true">
+
+    <testsuites>
+        <testsuite name="ATResourceAccessBundle test suite">
+            <directory suffix="Test.php">./Tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>./</directory>
+            <exclude>
+                <directory>./Resources</directory>
+                <directory>./Tests</directory>
+                <directory>./Repository</directory>
+                <directory>./Model</directory>
+                <directory>./Manager</directory>
+                <directory>./Entity</directory>
+                <directory>./DependencyInjection</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>

@@ -10,12 +10,13 @@ namespace AT\ResourceAccessBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use AT\ResourceAccessBundle\Entity\ResourceAccess;
+use AT\ResourceAccessBundle\Model\ResourceInterface;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="resources")
  */
-class Resource 
+class Resource implements ResourceInterface
 {
     /**
      * @ORM\Id
@@ -73,5 +74,13 @@ class Resource
     public function getResourceAccesses()
     {
         return $this->resourceAccesses;
+    }
+
+    /**
+     * @return Resource
+     */
+    public function getResource()
+    {
+        return $this;
     }
 }

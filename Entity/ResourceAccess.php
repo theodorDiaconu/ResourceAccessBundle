@@ -63,11 +63,11 @@ class ResourceAccess
     }
 
     /**
-     * @param Resource $resource
+     * @param ResourceInterface $resource
      *
      * @return $this
      */
-    public function setResource(Resource $resource)
+    public function setResource(ResourceInterface $resource)
     {
         $this->resource = $resource;
 
@@ -83,7 +83,7 @@ class ResourceAccess
     }
 
     /**
-     * @param Requester $requester
+     * @param RequesterInterface $requester
      *
      * @return $this
      */
@@ -123,11 +123,11 @@ class ResourceAccess
     }
 
     /**
-     * @param Requester $requester
+     * @param RequesterInterface $requester
      *
      * @return $this
      */
-    public function setGrantedBy($requester)
+    public function setGrantedBy(RequesterInterface $requester)
     {
         $this->grantedBy = $requester;
 
@@ -135,7 +135,7 @@ class ResourceAccess
     }
 
     /**
-     * @return Requester
+     * @return RequesterInterface
      */
     public function getGrantedBy()
     {
