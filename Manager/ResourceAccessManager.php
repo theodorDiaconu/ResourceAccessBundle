@@ -7,6 +7,7 @@
 
 namespace AT\ResourceAccessBundle\Manager;
 
+use AT\ResourceAccessBundle\Util\RoleHierarchyBuilder;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\Exception\Exception;
 use AT\ResourceAccessBundle\Repository\ResourceAccessRepository;
@@ -83,32 +84,32 @@ class ResourceAccessManager
      *
      * @param RequesterInterface $requester
      * @param ResourceInterface $customResource
-     * @param integer $accessLevel
+     * @param $accessLevel
      *
      * @return boolean
      * @throws \Exception
      */
     public function isGranted(RequesterInterface $requester, ResourceInterface $customResource, $accessLevel)
     {
+        /** @var ResourceInterface $resource */
         $resource = $customResource->getResource();
 
-        if (!in_array($accessLevel, ResourceAccess::$validAccesses)) {
-            throw(new \Exception("Invalid access level " . $accessLevel));
-        }
+        $accesses = $this->repository->getAccessLevel($requester, $resource);
 
-        $access = $this->repository->getAccessLevel($requester, $resource);
-
-        if (null === $access) {
-            return false;
-        } elseif ($access == ResourceAccess::ACCESS_ADMIN) {
-            return true;
-        } elseif ($access == ResourceAccess::ACCESS_EDIT && $accessLevel >= ResourceAccess::ACCESS_EDIT ) {
-            return true;
-        } elseif ($access == ResourceAccess::ACCESS_READ && $accessLevel === ResourceAccess::ACCESS_READ) {
-            return true;
-        } else {
+        if (null == $accesses) {
             return false;
         }
+
+        $roleHierarchy = RoleHierarchyBuilder::build($resource->getRoleHierarchy());
+
+        foreach ($accesses as $access) {
+            $hasAccess = $roleHierarchy->isRoleParentOf($access, $accessLevel);
+            if ($hasAccess) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -123,9 +124,10 @@ class ResourceAccessManager
      */
     public function grantAccess(RequesterInterface $requester, ResourceInterface $customResource, $accessLevel, RequesterInterface $grantedBy = null)
     {
+        /** @var ResourceInterface $resource */
         $resource = $customResource->getResource();
 
-        if (null !== $grantedBy && !$this->isGranted($grantedBy, $resource, ResourceAccess::ACCESS_ADMIN)) {
+        if (null !== $grantedBy && !$this->isGranted($grantedBy, $resource, ResourceAccess::ACCESS_SUPER_ADMIN)) {
             throw(new \Exception('The user with id ' . $requester->getId() . ' is not allowed to grant access'));
         }
 
