@@ -219,7 +219,7 @@ class ResourceAccessManager
         $resourceAccess = $this->repository->findOneBy(['requester' => $requester, 'resource' => $resource]);
 
         if (null === $resourceAccess) {
-            throw(new \Exception('The user with id ' . $requester->getId() . ' already has no access.'));
+            throw(new InvalidArgumentException('The user with id ' . $requester->getId() . ' already has no access.'));
         }
 
         $resourceAccess->removeAccessLevels($accessLevels);
@@ -231,11 +231,17 @@ class ResourceAccessManager
      *
      * @param RequesterInterface $requester
      * @param ResourceInterface $resource
+     *
+     * @throws \Symfony\Component\Validator\Exception\InvalidArgumentException
      */
     public function removeAccess(RequesterInterface $requester, ResourceInterface $resource)
     {
         /** @var ResourceAccess $resourceAccess */
         $resourceAccess = $this->repository->findOneBy(['requester' => $requester, 'resource' => $resource]);
+
+        if (null === $resourceAccess) {
+            throw(new InvalidArgumentException('The user with id ' . $requester->getId() . ' already has no access.'));
+        }
 
         $this->delete($resourceAccess);
     }

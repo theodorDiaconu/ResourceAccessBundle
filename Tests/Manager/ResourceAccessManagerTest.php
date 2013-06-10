@@ -333,4 +333,102 @@ class ResourceAccessManagerTest extends TestBase
         $this->assertFalse(in_array(ResourceAccess::ACCESS_ADMIN_1, $accessLevels));
         $this->assertFalse(in_array(ResourceAccess::ACCESS_ADMIN_2, $accessLevels));
     }
+
+    public function testRemoveAccessLevelsWithInvalidRequester()
+    {
+        $em = static::getDoctrine()->getManager();
+        /** @var ResourceAccessManager $RAManager */
+        $RAManager = $this->container->get('resource_access_manager');
+
+        $resource = new Resource();
+        $requester = new Requester();
+
+        $em->persist($requester);
+        $em->persist($resource);
+        $em->flush();
+
+        $this->setExpectedException('Symfony\Component\Validator\Exception\InvalidArgumentException');
+
+        $RAManager->removeAccessLevels($requester, $resource, [ResourceAccess::ACCESS_SUPER_ADMIN]);
+    }
+
+    public function testRemoveAccessLevels()
+    {
+        $em = static::getDoctrine()->getManager();
+        /** @var ResourceAccessRepository $rm */
+        $rm = static::getDoctrine()->getRepository('ATResourceAccessBundle:ResourceAccess');
+        /** @var ResourceAccessManager $RAManager */
+        $RAManager = $this->container->get('resource_access_manager');
+
+        $resource = new Resource();
+        $requester = new Requester();
+        $resourceAccess = new ResourceAccess();
+
+        $resourceAccess->setResource($resource)
+            ->setRequester($requester)
+            ->setAccessLevels([ResourceAccess::ACCESS_ADMIN_1, ResourceAccess::ACCESS_ADMIN_2])
+        ;
+
+        $em->persist($requester);
+        $em->persist($resource);
+        $em->persist($resourceAccess);
+        $em->flush();
+
+        $accessLevels = $rm->getAccessLevels($requester, $resource);
+
+        $this->assertTrue(in_array(ResourceAccess::ACCESS_ADMIN_1, $accessLevels));
+
+        $RAManager->removeAccessLevels($requester, $resource, [ResourceAccess::ACCESS_ADMIN_1]);
+
+        $accessLevels = $rm->getAccessLevels($requester, $resource);
+
+        $this->assertFalse(in_array(ResourceAccess::ACCESS_ADMIN_1, $accessLevels));
+    }
+
+    public function testRemoveAccessWithInvalidRequester()
+    {
+        $em = static::getDoctrine()->getManager();
+        /** @var ResourceAccessManager $RAManager */
+        $RAManager = $this->container->get('resource_access_manager');
+
+        $resource = new Resource();
+        $requester = new Requester();
+
+        $em->persist($requester);
+        $em->persist($resource);
+        $em->flush();
+
+        $this->setExpectedException('Symfony\Component\Validator\Exception\InvalidArgumentException');
+
+        $RAManager->removeAccess($requester, $resource);
+    }
+
+    public function testRemoveAccess()
+    {
+        $em = static::getDoctrine()->getManager();
+        /** @var ResourceAccessRepository $rm */
+        $rm = static::getDoctrine()->getRepository('ATResourceAccessBundle:ResourceAccess');
+        /** @var ResourceAccessManager $RAManager */
+        $RAManager = $this->container->get('resource_access_manager');
+
+        $resource = new Resource();
+        $requester = new Requester();
+        $resourceAccess = new ResourceAccess();
+
+        $resourceAccess->setResource($resource)
+            ->setRequester($requester)
+            ->setAccessLevels([ResourceAccess::ACCESS_ADMIN_1, ResourceAccess::ACCESS_ADMIN_2])
+        ;
+
+        $em->persist($requester);
+        $em->persist($resource);
+        $em->persist($resourceAccess);
+        $em->flush();
+
+        $RAManager->removeAccess($requester, $resource);
+
+        $resourceAccess = $rm->findOneBy(['requester' => $requester, 'resource' => $resource]);
+
+        $this->assertNull($resourceAccess);
+    }
 }
