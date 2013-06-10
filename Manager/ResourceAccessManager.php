@@ -7,9 +7,11 @@
 
 namespace AT\ResourceAccessBundle\Manager;
 
-use AT\ResourceAccessBundle\Util\RoleHierarchyBuilder;
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Validator\Exception\InvalidArgumentException;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Form\Exception\Exception;
+use AT\ResourceAccessBundle\Util\RoleHierarchyBuilder;
 use AT\ResourceAccessBundle\Repository\ResourceAccessRepository;
 use AT\ResourceAccessBundle\Model\RequesterInterface;
 use AT\ResourceAccessBundle\Model\ResourceInterface;
@@ -21,11 +23,14 @@ class ResourceAccessManager
     private $entityManager;
     /** @var ResourceAccessRepository */
     private $repository;
+    /** @var SecurityContextInterface */
+    private $securityContext;
 
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, SecurityContextInterface $securityContext)
     {
         $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository("ATResourceAccessBundle:ResourceAccess");
+        $this->securityContext = $securityContext;
     }
 
     public function flush()
@@ -82,19 +87,29 @@ class ResourceAccessManager
     /**
      * Checks if User has specified access level for resource
      *
-     * @param RequesterInterface $requester
-     * @param ResourceInterface $customResource
      * @param $accessLevel
+     * @param ResourceInterface $customResource
+     * @param RequesterInterface $requester
      *
-     * @return boolean
-     * @throws \Exception
+     * @return bool
+     * @throws \Symfony\Component\Validator\Exception\InvalidArgumentException
      */
-    public function isGranted(RequesterInterface $requester, ResourceInterface $customResource, $accessLevel)
+    public function isGranted($accessLevel, ResourceInterface $customResource, RequesterInterface $requester = null)
     {
+        if (null === $requester) {
+            $token = $this->securityContext->getToken();
+
+            if ($token instanceof AnonymousToken || null === $token) {
+                throw(new InvalidArgumentException('Invalid or no requester provided.'));
+            }
+
+            $requester = $token->getUser();
+        }
+
         /** @var ResourceInterface $resource */
         $resource = $customResource->getResource();
 
-        $accesses = $this->repository->getAccessLevel($requester, $resource);
+        $accesses = $this->repository->getAccessLevels($requester, $resource);
 
         if (null == $accesses) {
             return false;
@@ -117,18 +132,22 @@ class ResourceAccessManager
      *
      * @param RequesterInterface $requester
      * @param ResourceInterface $customResource
-     * @param integer $accessLevel
+     * @param array $accessLevels
      * @param RequesterInterface $grantedBy
      *
-     * @throws \Exception
+     * @throws \Symfony\Component\Validator\Exception\InvalidArgumentException
      */
-    public function grantAccess(RequesterInterface $requester, ResourceInterface $customResource, $accessLevel, RequesterInterface $grantedBy = null)
+    public function grantAccess(RequesterInterface $requester, ResourceInterface $customResource, $accessLevels = [], RequesterInterface $grantedBy = null)
     {
         /** @var ResourceInterface $resource */
         $resource = $customResource->getResource();
 
-        if (null !== $grantedBy && !$this->isGranted($grantedBy, $resource, ResourceAccess::ACCESS_SUPER_ADMIN)) {
-            throw(new \Exception('The user with id ' . $requester->getId() . ' is not allowed to grant access'));
+        $roleHierarchy = $resource->getRoleHierarchy();
+        reset($roleHierarchy);
+        $superAdminValue = key($roleHierarchy);
+
+        if (null !== $grantedBy && !$this->isGranted($superAdminValue, $resource, $grantedBy)) {
+            throw(new InvalidArgumentException('The user with id ' . $grantedBy->getId() . ' is not allowed to grant access'));
         }
 
         /** @var ResourceAccess $resourceAccess */
@@ -139,31 +158,76 @@ class ResourceAccessManager
             $resourceAccess
                 ->setRequester($requester)
                 ->setResource($resource)
-                ->setGrantedBy($grantedBy)
-                ->setAccessLevel($accessLevel)
+                ->setAccessLevels($accessLevels)
             ;
 
-            $this->entityManager->persist($resourceAccess);
-            $this->entityManager->flush();
+            if (null !== $grantedBy) {
+                $resourceAccess->setGrantedBy($grantedBy);
+            }
+
+            $this->save($resourceAccess);
+        } else {
+            $resourceAccess->addAccessLevels($accessLevels);
+
+            $this->update($resourceAccess);
         }
     }
 
     /**
-     * Updates access for given ResourceAccess
+     * Resets access for given Resource to the provided access levels
      *
-     * @param ResourceAccess $resourceAccess
-     * @param $accessLevel
+     * @param RequesterInterface $requester
+     * @param ResourceInterface $customResource
+     * @param array $accessLevels
      * @param RequesterInterface $grantedBy
+     *
+     * @throws \Exception
      */
-    public function updateAccess(ResourceAccess $resourceAccess, $accessLevel, RequesterInterface $grantedBy = null)
+    public function updateAccessLevels(RequesterInterface $requester, ResourceInterface $customResource, $accessLevels = [], RequesterInterface $grantedBy = null)
     {
-        $resourceAccess->setAccessLevel($accessLevel);
-        $resourceAccess->setGrantedBy($grantedBy);
+        $resource = $customResource->getResource();
+
+        /** @var ResourceAccess $resourceAccess */
+        $resourceAccess = $this->repository->findOneBy(['requester' => $requester, 'resource' => $resource]);
+
+        if (null === $resourceAccess) {
+            throw(new InvalidArgumentException('The user with id ' . $requester->getId() . ' has no access. Please use the method grantAccess'));
+        }
+
+        $resourceAccess->setAccessLevels($accessLevels);
+        if (null !== $grantedBy) {
+            $resourceAccess->setGrantedBy($grantedBy);
+        }
+
         $this->update($resourceAccess);
     }
 
     /**
-     * Removes access for given User
+     * Removes access levels for specified Resource
+     *
+     * @param RequesterInterface $requester
+     * @param ResourceInterface $customResource
+     * @param array $accessLevels
+     *
+     * @throws \Exception
+     */
+    public function removeAccessLevels(RequesterInterface $requester, ResourceInterface $customResource, $accessLevels = [])
+    {
+        $resource = $customResource->getResource();
+
+        /** @var ResourceAccess $resourceAccess */
+        $resourceAccess = $this->repository->findOneBy(['requester' => $requester, 'resource' => $resource]);
+
+        if (null === $resourceAccess) {
+            throw(new \Exception('The user with id ' . $requester->getId() . ' already has no access.'));
+        }
+
+        $resourceAccess->removeAccessLevels($accessLevels);
+        $this->update($resourceAccess);
+    }
+
+    /**
+     * Removes any access for given User
      *
      * @param RequesterInterface $requester
      * @param ResourceInterface $resource

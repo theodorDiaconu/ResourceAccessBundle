@@ -15,7 +15,7 @@ use Doctrine\ORM\EntityRepository;
 
 class ResourceAccessRepository extends EntityRepository
 {
-    public function getAccessLevel(RequesterInterface $requester, ResourceInterface $resource)
+    public function getAccessLevels(RequesterInterface $requester, ResourceInterface $resource)
     {
         $qb = $this->createQueryBuilder('ra');
 

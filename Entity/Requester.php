@@ -114,4 +114,9 @@ class Requester implements RequesterInterface
     {
         return $this->grants;
     }
+
+    public function __toString()
+    {
+        return 'test_requester';
+    }
 }
