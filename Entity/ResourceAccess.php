@@ -8,8 +8,10 @@
 namespace AT\ResourceAccessBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 use AT\ResourceAccessBundle\Entity\Resource;
 use AT\ResourceAccessBundle\Entity\Requester;
+use AT\ResourceAccessBundle\Model\ResourceInterface;
 use AT\ResourceAccessBundle\Model\RequesterInterface;
 
 /**
@@ -18,11 +20,18 @@ use AT\ResourceAccessBundle\Model\RequesterInterface;
  */
 class ResourceAccess
 {
-    const ACCESS_ADMIN = 1;
-    const ACCESS_EDIT = 2;
-    const ACCESS_READ = 3;
-
-    static $validAccesses = [ self::ACCESS_READ, self::ACCESS_EDIT, self::ACCESS_ADMIN ];
+    const ACCESS_SUPER_ADMIN = 1;
+    const ACCESS_ADMIN_1 = 11;
+    const ACCESS_ADMIN_2 = 12;
+    const ACCESS_MODERATOR_1 = 111;
+    const ACCESS_MODERATOR_2 = 121;
+    const ACCESS_REVIEWER_2 = 122;
+    const ACCESS_EDIT_1 = 1111;
+    const ACCESS_READ_1 = 1112;
+    const ACCESS_EDIT_2 = 1211;
+    const ACCESS_READ_2 = 1212;
+    const ACCESS_EDIT_REVIEW = 1221;
+    const ACCESS_READ_REVIEW = 1222;
 
     /**
      * @ORM\Id
@@ -44,15 +53,20 @@ class ResourceAccess
     protected $requester;
 
     /**
-     * @ORM\Column(name="access_level", type="integer")
+     * @ORM\Column(name="access_level", type="array")
      */
-    protected $accessLevel;
+    protected $accessLevels;
 
     /**
      * @ORM\ManyToOne(targetEntity="Requester", inversedBy="grants")
      * @ORM\JoinColumn(name="granted_by", referencedColumnName="id")
      */
     protected $grantedBy;
+
+    public function __construct()
+    {
+        $this->accessLevels = [];
+    }
 
     /**
      * @return integer
@@ -103,23 +117,52 @@ class ResourceAccess
     }
 
     /**
-     * @param integer $accessLevel
+     * @param array $array
      *
      * @return $this
      */
-    public function setAccessLevel($accessLevel)
+    public function setAccessLevels($array)
     {
-        $this->accessLevel = $accessLevel;
+        $this->accessLevels = $array;
 
         return $this;
     }
 
     /**
-     * @return integer
+     * @param array $accessLevels
+     *
+     * @return $this
      */
-    public function getAccessLevel()
+    public function addAccessLevels($accessLevels)
     {
-        return $this->accessLevel;
+        $newRoles = array_diff($accessLevels, $this->accessLevels);
+        if (!empty($newRoles)) {
+            $this->accessLevels = array_merge($this->accessLevels, $newRoles);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param array $accessLevels
+     *
+     * @return $this
+     */
+    public function removeAccessLevels($accessLevels)
+    {
+        $remainingRoles = array_diff($this->accessLevels, $accessLevels);
+
+        $this->accessLevels = $remainingRoles;
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getAccessLevels()
+    {
+        return $this->accessLevels;
     }
 
     /**
