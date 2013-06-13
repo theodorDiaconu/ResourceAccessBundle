@@ -15,11 +15,12 @@ namespace AT\ResourceAccessBundle\Tests\Manager;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use AT\ResourceAccessBundle\Tests\TestBase;
-use AT\ResourceAccessBundle\Entity\Requester;
+use AT\ResourceAccessBundle\Tests\Entity\Requester;
 use AT\ResourceAccessBundle\Entity\Resource;
 use AT\ResourceAccessBundle\Entity\ResourceAccess;
 use AT\ResourceAccessBundle\Manager\ResourceAccessManager;
 use AT\ResourceAccessBundle\Repository\ResourceAccessRepository;
+use AT\ResourceAccessBundle\Model\Roles;
 
 class ResourceAccessManagerTest extends TestBase
 {
@@ -34,7 +35,7 @@ class ResourceAccessManagerTest extends TestBase
 
         $this->setExpectedException('Symfony\Component\Validator\Exception\InvalidArgumentException');
 
-        $this->RAManager->isGranted(ResourceAccess::ACCESS_SUPER_ADMIN, $resource);
+        $this->RAManager->isGranted(Roles::ACCESS_SUPER_ADMIN, $resource);
     }
 
     public function testIsGranted()
@@ -47,21 +48,21 @@ class ResourceAccessManagerTest extends TestBase
         $this->entityManager->flush();
 
         // testing there is no access without a resourceAccess
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_SUPER_ADMIN, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_REVIEWER_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_REVIEW, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_REVIEW, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_SUPER_ADMIN, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_ADMIN_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_ADMIN_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_REVIEWER_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_REVIEW, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_REVIEW, $resource, $requester));
 
         $resourceAccess = new ResourceAccess();
-        $resourceAccess->setAccessLevels([ResourceAccess::ACCESS_SUPER_ADMIN]);
+        $resourceAccess->setAccessLevels([Roles::ACCESS_SUPER_ADMIN]);
         $resourceAccess->setResource($resource);
         $resourceAccess->setRequester($requester);
 
@@ -69,18 +70,18 @@ class ResourceAccessManagerTest extends TestBase
         $this->entityManager->flush();
 
         // testing that all roles are seen under ACCESS_SUPER_ADMIN
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_SUPER_ADMIN, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_1, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_1, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_REVIEWER_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_1, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_REVIEW, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_1, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_REVIEW, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_SUPER_ADMIN, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_ADMIN_1, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_ADMIN_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_1, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_REVIEWER_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_EDIT_1, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_EDIT_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_EDIT_REVIEW, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_READ_1, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_READ_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_READ_REVIEW, $resource, $requester));
 
         // testing with a logged in user
 
@@ -93,144 +94,144 @@ class ResourceAccessManagerTest extends TestBase
             )
         );
 
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_SUPER_ADMIN, $resource));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_SUPER_ADMIN, $resource));
 
         // testing different roles, alone or in combination
-        $resourceAccess->setAccessLevels([ResourceAccess::ACCESS_ADMIN_1]);
+        $resourceAccess->setAccessLevels([Roles::ACCESS_ADMIN_1]);
         $this->entityManager->persist($resourceAccess);
         $this->entityManager->flush();
 
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_SUPER_ADMIN, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_REVIEWER_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_REVIEW, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_REVIEW, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_SUPER_ADMIN, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_ADMIN_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_ADMIN_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_REVIEWER_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_EDIT_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_REVIEW, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_READ_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_REVIEW, $resource, $requester));
 
-        $resourceAccess->setAccessLevels([ResourceAccess::ACCESS_MODERATOR_1]);
+        $resourceAccess->setAccessLevels([Roles::ACCESS_MODERATOR_1]);
         $this->entityManager->persist($resourceAccess);
         $this->entityManager->flush();
 
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_SUPER_ADMIN, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_REVIEWER_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_REVIEW, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_REVIEW, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_SUPER_ADMIN, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_ADMIN_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_ADMIN_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_REVIEWER_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_EDIT_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_REVIEW, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_READ_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_REVIEW, $resource, $requester));
 
-        $resourceAccess->setAccessLevels([ResourceAccess::ACCESS_EDIT_1]);
+        $resourceAccess->setAccessLevels([Roles::ACCESS_EDIT_1]);
         $this->entityManager->persist($resourceAccess);
         $this->entityManager->flush();
 
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_SUPER_ADMIN, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_REVIEWER_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_REVIEW, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_REVIEW, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_SUPER_ADMIN, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_ADMIN_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_ADMIN_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_REVIEWER_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_EDIT_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_REVIEW, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_READ_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_REVIEW, $resource, $requester));
 
-        $resourceAccess->setAccessLevels([ResourceAccess::ACCESS_READ_1]);
+        $resourceAccess->setAccessLevels([Roles::ACCESS_READ_1]);
         $this->entityManager->persist($resourceAccess);
         $this->entityManager->flush();
 
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_SUPER_ADMIN, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_REVIEWER_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_REVIEW, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_REVIEW, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_SUPER_ADMIN, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_ADMIN_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_ADMIN_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_REVIEWER_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_REVIEW, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_READ_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_REVIEW, $resource, $requester));
 
-        $resourceAccess->setAccessLevels([ResourceAccess::ACCESS_ADMIN_2]);
+        $resourceAccess->setAccessLevels([Roles::ACCESS_ADMIN_2]);
         $this->entityManager->persist($resourceAccess);
         $this->entityManager->flush();
 
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_SUPER_ADMIN, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_1, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_1, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_REVIEWER_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_1, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_REVIEW, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_1, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_REVIEW, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_SUPER_ADMIN, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_ADMIN_1, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_ADMIN_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_1, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_REVIEWER_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_1, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_EDIT_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_EDIT_REVIEW, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_1, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_READ_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_READ_REVIEW, $resource, $requester));
 
-        $resourceAccess->setAccessLevels([ResourceAccess::ACCESS_REVIEWER_2]);
+        $resourceAccess->setAccessLevels([Roles::ACCESS_REVIEWER_2]);
         $this->entityManager->persist($resourceAccess);
         $this->entityManager->flush();
 
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_SUPER_ADMIN, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_REVIEWER_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_REVIEW, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_REVIEW, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_SUPER_ADMIN, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_ADMIN_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_ADMIN_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_REVIEWER_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_EDIT_REVIEW, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_READ_REVIEW, $resource, $requester));
 
-        $resourceAccess->setAccessLevels([ResourceAccess::ACCESS_READ_REVIEW]);
+        $resourceAccess->setAccessLevels([Roles::ACCESS_READ_REVIEW]);
         $this->entityManager->persist($resourceAccess);
         $this->entityManager->flush();
 
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_SUPER_ADMIN, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_REVIEWER_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_REVIEW, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_REVIEW, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_SUPER_ADMIN, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_ADMIN_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_ADMIN_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_REVIEWER_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_REVIEW, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_READ_REVIEW, $resource, $requester));
 
-        $resourceAccess->setAccessLevels([ResourceAccess::ACCESS_READ_REVIEW, ResourceAccess::ACCESS_MODERATOR_1]);
+        $resourceAccess->setAccessLevels([Roles::ACCESS_READ_REVIEW, Roles::ACCESS_MODERATOR_1]);
         $this->entityManager->persist($resourceAccess);
         $this->entityManager->flush();
 
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_SUPER_ADMIN, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_ADMIN_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_MODERATOR_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_REVIEWER_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_2, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_EDIT_REVIEW, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_1, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_2, $resource, $requester));
-        $this->assertTrue($this->RAManager->isGranted(ResourceAccess::ACCESS_READ_REVIEW, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_SUPER_ADMIN, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_ADMIN_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_ADMIN_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_MODERATOR_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_REVIEWER_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_EDIT_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_REVIEW, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_READ_1, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_2, $resource, $requester));
+        $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_READ_REVIEW, $resource, $requester));
 
     }
 
@@ -247,7 +248,7 @@ class ResourceAccessManagerTest extends TestBase
 
         $this->setExpectedException('Symfony\Component\Validator\Exception\InvalidArgumentException');
 
-        $this->RAManager->grantAccess($requester, $resource, [ResourceAccess::ACCESS_SUPER_ADMIN], $user);
+        $this->RAManager->grantAccess($requester, $resource, [Roles::ACCESS_SUPER_ADMIN], $user);
     }
 
     public function testGrantAccess()
@@ -263,17 +264,17 @@ class ResourceAccessManagerTest extends TestBase
         $this->entityManager->flush();
 
 
-        $this->RAManager->grantAccess($requester, $resource, [ResourceAccess::ACCESS_READ_REVIEW]);
+        $this->RAManager->grantAccess($requester, $resource, [Roles::ACCESS_READ_REVIEW]);
         $accessLevels = $rm->getAccessLevels($requester, $resource);
 
-        $this->assertTrue(in_array(ResourceAccess::ACCESS_READ_REVIEW, $accessLevels));
+        $this->assertTrue(in_array(Roles::ACCESS_READ_REVIEW, $accessLevels));
 
-        $this->RAManager->grantAccess($requester, $resource, [ResourceAccess::ACCESS_EDIT_1, ResourceAccess::ACCESS_READ_2]);
+        $this->RAManager->grantAccess($requester, $resource, [Roles::ACCESS_EDIT_1, Roles::ACCESS_READ_2]);
         $accessLevels = $rm->getAccessLevels($requester, $resource);
 
-        $this->assertTrue(in_array(ResourceAccess::ACCESS_READ_REVIEW, $accessLevels));
-        $this->assertTrue(in_array(ResourceAccess::ACCESS_READ_2, $accessLevels));
-        $this->assertTrue(in_array(ResourceAccess::ACCESS_EDIT_1, $accessLevels));
+        $this->assertTrue(in_array(Roles::ACCESS_READ_REVIEW, $accessLevels));
+        $this->assertTrue(in_array(Roles::ACCESS_READ_2, $accessLevels));
+        $this->assertTrue(in_array(Roles::ACCESS_EDIT_1, $accessLevels));
     }
 
     public function testUpdateAccessLevelsWithInvalidRequester()
@@ -287,7 +288,7 @@ class ResourceAccessManagerTest extends TestBase
 
         $this->setExpectedException('Symfony\Component\Validator\Exception\InvalidArgumentException');
 
-        $this->RAManager->updateAccessLevels($requester, $resource, [ResourceAccess::ACCESS_SUPER_ADMIN]);
+        $this->RAManager->updateAccessLevels($requester, $resource, [Roles::ACCESS_SUPER_ADMIN]);
     }
 
     public function testUpdateAccessLevels()
@@ -301,7 +302,7 @@ class ResourceAccessManagerTest extends TestBase
 
         $resourceAccess->setResource($resource)
             ->setRequester($requester)
-            ->setAccessLevels([ResourceAccess::ACCESS_ADMIN_1, ResourceAccess::ACCESS_ADMIN_2])
+            ->setAccessLevels([Roles::ACCESS_ADMIN_1, Roles::ACCESS_ADMIN_2])
         ;
 
         $this->entityManager->persist($requester);
@@ -309,13 +310,13 @@ class ResourceAccessManagerTest extends TestBase
         $this->entityManager->persist($resourceAccess);
         $this->entityManager->flush();
 
-        $this->RAManager->updateAccessLevels($requester, $resource, [ResourceAccess::ACCESS_SUPER_ADMIN]);
+        $this->RAManager->updateAccessLevels($requester, $resource, [Roles::ACCESS_SUPER_ADMIN]);
 
         $accessLevels = $rm->getAccessLevels($requester, $resource);
 
-        $this->assertTrue(in_array(ResourceAccess::ACCESS_SUPER_ADMIN, $accessLevels));
-        $this->assertFalse(in_array(ResourceAccess::ACCESS_ADMIN_1, $accessLevels));
-        $this->assertFalse(in_array(ResourceAccess::ACCESS_ADMIN_2, $accessLevels));
+        $this->assertTrue(in_array(Roles::ACCESS_SUPER_ADMIN, $accessLevels));
+        $this->assertFalse(in_array(Roles::ACCESS_ADMIN_1, $accessLevels));
+        $this->assertFalse(in_array(Roles::ACCESS_ADMIN_2, $accessLevels));
     }
 
     public function testRemoveAccessLevelsWithInvalidRequester()
@@ -329,7 +330,7 @@ class ResourceAccessManagerTest extends TestBase
 
         $this->setExpectedException('Symfony\Component\Validator\Exception\InvalidArgumentException');
 
-        $this->RAManager->removeAccessLevels($requester, $resource, [ResourceAccess::ACCESS_SUPER_ADMIN]);
+        $this->RAManager->removeAccessLevels($requester, $resource, [Roles::ACCESS_SUPER_ADMIN]);
     }
 
     public function testRemoveAccessLevels()
@@ -343,7 +344,7 @@ class ResourceAccessManagerTest extends TestBase
 
         $resourceAccess->setResource($resource)
             ->setRequester($requester)
-            ->setAccessLevels([ResourceAccess::ACCESS_ADMIN_1, ResourceAccess::ACCESS_ADMIN_2])
+            ->setAccessLevels([Roles::ACCESS_ADMIN_1, Roles::ACCESS_ADMIN_2])
         ;
 
         $this->entityManager->persist($requester);
@@ -353,13 +354,13 @@ class ResourceAccessManagerTest extends TestBase
 
         $accessLevels = $rm->getAccessLevels($requester, $resource);
 
-        $this->assertTrue(in_array(ResourceAccess::ACCESS_ADMIN_1, $accessLevels));
+        $this->assertTrue(in_array(Roles::ACCESS_ADMIN_1, $accessLevels));
 
-        $this->RAManager->removeAccessLevels($requester, $resource, [ResourceAccess::ACCESS_ADMIN_1]);
+        $this->RAManager->removeAccessLevels($requester, $resource, [Roles::ACCESS_ADMIN_1]);
 
         $accessLevels = $rm->getAccessLevels($requester, $resource);
 
-        $this->assertFalse(in_array(ResourceAccess::ACCESS_ADMIN_1, $accessLevels));
+        $this->assertFalse(in_array(Roles::ACCESS_ADMIN_1, $accessLevels));
     }
 
     public function testRemoveAccessWithInvalidRequester()
@@ -387,7 +388,7 @@ class ResourceAccessManagerTest extends TestBase
 
         $resourceAccess->setResource($resource)
             ->setRequester($requester)
-            ->setAccessLevels([ResourceAccess::ACCESS_ADMIN_1, ResourceAccess::ACCESS_ADMIN_2])
+            ->setAccessLevels([Roles::ACCESS_ADMIN_1, Roles::ACCESS_ADMIN_2])
         ;
 
         $this->entityManager->persist($requester);

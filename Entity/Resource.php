@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use AT\ResourceAccessBundle\Entity\ResourceAccess;
 use AT\ResourceAccessBundle\Model\ResourceInterface;
+use AT\ResourceAccessBundle\Model\Roles;
 
 /**
  * @ORM\Entity
@@ -95,23 +96,23 @@ class Resource implements ResourceInterface
     public function getRoleHierarchy()
     {
         $roleHierarchy = [
-            ResourceAccess::ACCESS_SUPER_ADMIN => [
-                ResourceAccess::ACCESS_ADMIN_1 => [
-                    ResourceAccess::ACCESS_MODERATOR_1 => [
-                        ResourceAccess::ACCESS_EDIT_1 => [
-                            ResourceAccess::ACCESS_READ_1
+            Roles::ACCESS_SUPER_ADMIN => [
+                Roles::ACCESS_ADMIN_1 => [
+                    Roles::ACCESS_MODERATOR_1 => [
+                        Roles::ACCESS_EDIT_1 => [
+                            Roles::ACCESS_READ_1
                         ]
                     ]
                 ],
-                ResourceAccess::ACCESS_ADMIN_2 => [
-                    ResourceAccess::ACCESS_MODERATOR_2 => [
-                        ResourceAccess::ACCESS_EDIT_2 => [
-                            ResourceAccess::ACCESS_READ_2
+                Roles::ACCESS_ADMIN_2 => [
+                    Roles::ACCESS_MODERATOR_2 => [
+                        Roles::ACCESS_EDIT_2 => [
+                            Roles::ACCESS_READ_2
                         ]
                     ],
-                    ResourceAccess::ACCESS_REVIEWER_2 => [
-                        ResourceAccess::ACCESS_EDIT_REVIEW,
-                        ResourceAccess::ACCESS_READ_REVIEW
+                    Roles::ACCESS_REVIEWER_2 => [
+                        Roles::ACCESS_EDIT_REVIEW,
+                        Roles::ACCESS_READ_REVIEW
                     ]
                 ]
             ]

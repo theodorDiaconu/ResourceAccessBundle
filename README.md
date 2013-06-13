@@ -178,3 +178,28 @@ You can now use the manager to manage the roles on your resource:
      */
     $resourceAccessManager->removeAccess($user, $resource);
 ```
+
+## Testing
+
+For the tests to run you have to add these lines in your config_test.yml
+
+``` yaml
+
+    doctrine:
+        orm:
+            resolve_target_entities:
+                AT\ResourceAccessBundle\Entity\Requester: AT\ResourceAccessBundle\Tests\Entity\Requester
+            mappings:
+                requester:
+                    type: annotation
+                    dir: %kernel.root_dir%/../vendor/at/resource-access/AT/ResourceAccessBundle/Tests/Entity
+                    alias: Requester
+                    prefix: AT\ResourceAccessBundle\Tests\Entity
+                    is_bundle: false
+```
+
+Now run this command to run the tests:
+
+``` bash
+~ phpunit -c app vendor/at/resource-access/AT/ResourceAccessBundle/Tests
+```
