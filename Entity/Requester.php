@@ -14,7 +14,7 @@ use AT\ResourceAccessBundle\Model\RequesterInterface;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="requesters")
+ * @ORM\Table(name="at_requesters")
  */
 class Requester implements RequesterInterface
 {

@@ -16,7 +16,7 @@ use AT\ResourceAccessBundle\Model\RequesterInterface;
 
 /**
  * @ORM\Entity(repositoryClass="AT\ResourceAccessBundle\Repository\ResourceAccessRepository")
- * @ORM\Table(name="resource_accesses")
+ * @ORM\Table(name="at_resource_accesses")
  */
 class ResourceAccess
 {

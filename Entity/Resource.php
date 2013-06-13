@@ -14,7 +14,7 @@ use AT\ResourceAccessBundle\Model\ResourceInterface;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="resources")
+ * @ORM\Table(name="at_resources")
  */
 class Resource implements ResourceInterface
 {

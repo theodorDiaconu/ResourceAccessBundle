@@ -39,7 +39,7 @@ public function registerBundles()
 }
 ```
 
-### Step 3: Add your user class to doctrine's resolve_target_entities to override our requester class in config.yml:
+### Step 3: Add your user class to doctrine's resolve_target_entities in config.yml:
 
 ``` yaml
     doctrine:
@@ -157,6 +157,8 @@ You can now use the manager to manage the roles on your resource:
 
     /**
      * Returns true if user has specified access for resource, otherwise returns false
+     * $user is optional
+     * If $user is not provided the method will use the logged in user from security.context
      */
     $resourceAccessManager->isGranted($access, $resource, $user);
 
