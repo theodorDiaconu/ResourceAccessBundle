@@ -1,6 +1,6 @@
 <?php
 
-namespace AT\ResourceAccessBundle\Model;
+namespace AT\ResourceAccessBundle\Tests\Model;
 
 class Roles
 {

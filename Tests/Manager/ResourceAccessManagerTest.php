@@ -18,7 +18,7 @@ use AT\ResourceAccessBundle\Tests\TestBase;
 use AT\ResourceAccessBundle\Tests\Entity\Requester;
 use AT\ResourceAccessBundle\Entity\Resource;
 use AT\ResourceAccessBundle\Entity\ResourceAccess;
-use AT\ResourceAccessBundle\Model\Roles;
+use AT\ResourceAccessBundle\Tests\Model\Roles;
 
 class ResourceAccessManagerTest extends TestBase
 {

@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use AT\ResourceAccessBundle\Entity\ResourceAccess;
 use AT\ResourceAccessBundle\Model\ResourceInterface;
-use AT\ResourceAccessBundle\Model\Roles;
+use AT\ResourceAccessBundle\Tests\Model\Roles;
 
 /**
  * @ORM\Entity
