@@ -1,6 +1,6 @@
 # ResourceAccessBundle
 
-## Instalation
+## Installation
 
 ### Step 1: Download ResourceAccessBundle using composer
 

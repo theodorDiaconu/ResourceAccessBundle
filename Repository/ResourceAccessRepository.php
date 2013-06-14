@@ -27,8 +27,7 @@ class ResourceAccessRepository extends EntityRepository
         $qb
             ->select('ra')
             ->where('ra.requester = :requester AND ra.resource = :resource')
-            ->setParameters(['requester' => $requester, 'resource' => $resource])
-        ;
+            ->setParameters(['requester' => $requester, 'resource' => $resource]);
 
         try {
             /** @var ResourceAccess $result */

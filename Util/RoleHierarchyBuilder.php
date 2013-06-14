@@ -13,6 +13,7 @@
 namespace AT\ResourceAccessBundle\Util;
 
 use AT\ResourceAccessBundle\Model\RoleHierarchy;
+use AT\ResourceAccessBundle\Util\RoleNode;
 
 class RoleHierarchyBuilder
 {
@@ -26,7 +27,7 @@ class RoleHierarchyBuilder
         reset($array);
         $rootValue = key($array);
 
-        $root = new RoleNode($rootValue);
+        $root     = new RoleNode($rootValue);
         $children = [];
         static::roleIterator($array[$rootValue], $root, $children);
 
@@ -35,15 +36,20 @@ class RoleHierarchyBuilder
         return $roleHierarchy;
     }
 
+    /**
+     * @param array $arr
+     * @param RoleNode|null $parent
+     * @param array $children
+     */
     protected static function roleIterator($arr, $parent, &$children)
     {
         foreach ($arr as $key => $value) {
             if (is_array($value)) {
-                $roleNode = new RoleNode($key, $parent);
+                $roleNode   = new RoleNode($key, $parent);
                 $children[] = $roleNode;
                 static::roleIterator($value, $roleNode, $children);
             } else {
-                $finalNode = new RoleNode($value ,$parent);
+                $finalNode  = new RoleNode($value, $parent);
                 $children[] = $finalNode;
             }
         }

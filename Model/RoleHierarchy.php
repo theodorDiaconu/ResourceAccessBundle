@@ -27,7 +27,7 @@ class RoleHierarchy
      */
     public function __construct(RoleNode $root, $children)
     {
-        $this->root = $root;
+        $this->root     = $root;
         $this->children = $children;
     }
 
@@ -45,7 +45,7 @@ class RoleHierarchy
             return false;
         }
 
-        foreach($this->children as $child) {
+        foreach ($this->children as $child) {
             if ($child->getValue() == $target) {
                 //we check the next parent maybe it's close :)
                 if ($child->getParent()->getValue() == $role) {
@@ -55,7 +55,7 @@ class RoleHierarchy
                     $nextChild = $child->getParent();
                 }
 
-                while(true) {
+                while (true) {
                     if ($nextChild->getParent() === null) {
                         // we hit the end
                         return false;

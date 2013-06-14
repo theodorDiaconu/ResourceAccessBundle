@@ -43,7 +43,7 @@ class Requester implements RequesterInterface
     public function __construct()
     {
         $this->resourceAccesses = new ArrayCollection();
-        $this->grants = new ArrayCollection();
+        $this->grants           = new ArrayCollection();
     }
 
     /**

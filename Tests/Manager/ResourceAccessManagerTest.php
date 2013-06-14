@@ -18,15 +18,13 @@ use AT\ResourceAccessBundle\Tests\TestBase;
 use AT\ResourceAccessBundle\Tests\Entity\Requester;
 use AT\ResourceAccessBundle\Entity\Resource;
 use AT\ResourceAccessBundle\Entity\ResourceAccess;
-use AT\ResourceAccessBundle\Manager\ResourceAccessManager;
-use AT\ResourceAccessBundle\Repository\ResourceAccessRepository;
 use AT\ResourceAccessBundle\Model\Roles;
 
 class ResourceAccessManagerTest extends TestBase
 {
     public function testIsGrantedWithInvalidUser()
     {
-        $resource = new Resource();
+        $resource  = new Resource();
         $requester = new Requester();
 
         $this->entityManager->persist($requester);
@@ -40,7 +38,7 @@ class ResourceAccessManagerTest extends TestBase
 
     public function testIsGranted()
     {
-        $resource = new Resource();
+        $resource  = new Resource();
         $requester = new Requester();
 
         $this->entityManager->persist($requester);
@@ -237,9 +235,9 @@ class ResourceAccessManagerTest extends TestBase
 
     public function testGrantAccessWithInvalidGrantedBy()
     {
-        $resource = new Resource();
+        $resource  = new Resource();
         $requester = new Requester();
-        $user = new Requester();
+        $user      = new Requester();
 
         $this->entityManager->persist($requester);
         $this->entityManager->persist($user);
@@ -253,24 +251,20 @@ class ResourceAccessManagerTest extends TestBase
 
     public function testGrantAccess()
     {
-        /** @var ResourceAccessRepository $rm */
-        $rm = static::getDoctrine()->getRepository('ATResourceAccessBundle:ResourceAccess');
-
-        $resource = new Resource();
+        $resource  = new Resource();
         $requester = new Requester();
 
         $this->entityManager->persist($resource);
         $this->entityManager->persist($requester);
         $this->entityManager->flush();
 
-
         $this->RAManager->grantAccess($requester, $resource, [Roles::ACCESS_READ_REVIEW]);
-        $accessLevels = $rm->getAccessLevels($requester, $resource);
+        $accessLevels = $this->resourceAccessRepository->getAccessLevels($requester, $resource);
 
         $this->assertTrue(in_array(Roles::ACCESS_READ_REVIEW, $accessLevels));
 
         $this->RAManager->grantAccess($requester, $resource, [Roles::ACCESS_EDIT_1, Roles::ACCESS_READ_2]);
-        $accessLevels = $rm->getAccessLevels($requester, $resource);
+        $accessLevels = $this->resourceAccessRepository->getAccessLevels($requester, $resource);
 
         $this->assertTrue(in_array(Roles::ACCESS_READ_REVIEW, $accessLevels));
         $this->assertTrue(in_array(Roles::ACCESS_READ_2, $accessLevels));
@@ -279,7 +273,7 @@ class ResourceAccessManagerTest extends TestBase
 
     public function testUpdateAccessLevelsWithInvalidRequester()
     {
-        $resource = new Resource();
+        $resource  = new Resource();
         $requester = new Requester();
 
         $this->entityManager->persist($requester);
@@ -293,17 +287,13 @@ class ResourceAccessManagerTest extends TestBase
 
     public function testUpdateAccessLevels()
     {
-        /** @var ResourceAccessRepository $rm */
-        $rm = static::getDoctrine()->getRepository('ATResourceAccessBundle:ResourceAccess');
-
-        $resource = new Resource();
-        $requester = new Requester();
+        $resource       = new Resource();
+        $requester      = new Requester();
         $resourceAccess = new ResourceAccess();
 
         $resourceAccess->setResource($resource)
             ->setRequester($requester)
-            ->setAccessLevels([Roles::ACCESS_ADMIN_1, Roles::ACCESS_ADMIN_2])
-        ;
+            ->setAccessLevels([Roles::ACCESS_ADMIN_1, Roles::ACCESS_ADMIN_2]);
 
         $this->entityManager->persist($requester);
         $this->entityManager->persist($resource);
@@ -312,7 +302,7 @@ class ResourceAccessManagerTest extends TestBase
 
         $this->RAManager->updateAccessLevels($requester, $resource, [Roles::ACCESS_SUPER_ADMIN]);
 
-        $accessLevels = $rm->getAccessLevels($requester, $resource);
+        $accessLevels = $this->resourceAccessRepository->getAccessLevels($requester, $resource);
 
         $this->assertTrue(in_array(Roles::ACCESS_SUPER_ADMIN, $accessLevels));
         $this->assertFalse(in_array(Roles::ACCESS_ADMIN_1, $accessLevels));
@@ -321,7 +311,7 @@ class ResourceAccessManagerTest extends TestBase
 
     public function testRemoveAccessLevelsWithInvalidRequester()
     {
-        $resource = new Resource();
+        $resource  = new Resource();
         $requester = new Requester();
 
         $this->entityManager->persist($requester);
@@ -335,37 +325,33 @@ class ResourceAccessManagerTest extends TestBase
 
     public function testRemoveAccessLevels()
     {
-        /** @var ResourceAccessRepository $rm */
-        $rm = static::getDoctrine()->getRepository('ATResourceAccessBundle:ResourceAccess');
-
-        $resource = new Resource();
-        $requester = new Requester();
+        $resource       = new Resource();
+        $requester      = new Requester();
         $resourceAccess = new ResourceAccess();
 
         $resourceAccess->setResource($resource)
             ->setRequester($requester)
-            ->setAccessLevels([Roles::ACCESS_ADMIN_1, Roles::ACCESS_ADMIN_2])
-        ;
+            ->setAccessLevels([Roles::ACCESS_ADMIN_1, Roles::ACCESS_ADMIN_2]);
 
         $this->entityManager->persist($requester);
         $this->entityManager->persist($resource);
         $this->entityManager->persist($resourceAccess);
         $this->entityManager->flush();
 
-        $accessLevels = $rm->getAccessLevels($requester, $resource);
+        $accessLevels = $this->resourceAccessRepository->getAccessLevels($requester, $resource);
 
         $this->assertTrue(in_array(Roles::ACCESS_ADMIN_1, $accessLevels));
 
         $this->RAManager->removeAccessLevels($requester, $resource, [Roles::ACCESS_ADMIN_1]);
 
-        $accessLevels = $rm->getAccessLevels($requester, $resource);
+        $accessLevels = $this->resourceAccessRepository->getAccessLevels($requester, $resource);
 
         $this->assertFalse(in_array(Roles::ACCESS_ADMIN_1, $accessLevels));
     }
 
     public function testRemoveAccessWithInvalidRequester()
     {
-        $resource = new Resource();
+        $resource  = new Resource();
         $requester = new Requester();
 
         $this->entityManager->persist($requester);
@@ -379,17 +365,13 @@ class ResourceAccessManagerTest extends TestBase
 
     public function testRemoveAccess()
     {
-        /** @var ResourceAccessRepository $rm */
-        $rm = static::getDoctrine()->getRepository('ATResourceAccessBundle:ResourceAccess');
-
-        $resource = new Resource();
-        $requester = new Requester();
+        $resource       = new Resource();
+        $requester      = new Requester();
         $resourceAccess = new ResourceAccess();
 
         $resourceAccess->setResource($resource)
             ->setRequester($requester)
-            ->setAccessLevels([Roles::ACCESS_ADMIN_1, Roles::ACCESS_ADMIN_2])
-        ;
+            ->setAccessLevels([Roles::ACCESS_ADMIN_1, Roles::ACCESS_ADMIN_2]);
 
         $this->entityManager->persist($requester);
         $this->entityManager->persist($resource);
@@ -398,7 +380,7 @@ class ResourceAccessManagerTest extends TestBase
 
         $this->RAManager->removeAccess($requester, $resource);
 
-        $resourceAccess = $rm->findOneBy(['requester' => $requester, 'resource' => $resource]);
+        $resourceAccess = $this->resourceAccessRepository->findOneBy(['requester' => $requester, 'resource' => $resource]);
 
         $this->assertNull($resourceAccess);
     }

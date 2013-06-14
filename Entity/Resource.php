@@ -110,7 +110,7 @@ class Resource implements ResourceInterface
                             Roles::ACCESS_READ_2
                         ]
                     ],
-                    Roles::ACCESS_REVIEWER_2 => [
+                    Roles::ACCESS_REVIEWER_2  => [
                         Roles::ACCESS_EDIT_REVIEW,
                         Roles::ACCESS_READ_REVIEW
                     ]

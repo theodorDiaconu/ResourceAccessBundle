@@ -12,20 +12,23 @@
 
 namespace AT\ResourceAccessBundle\Tests;
 
-use Doctrine\Common\EventManager;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Tools\ResolveTargetEntityListener;
-use Symfony\Bridge\Doctrine\ContainerAwareEventManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
+use AT\ResourceAccessBundle\Repository\ResourceAccessRepository;
 
 class TestBase extends WebTestCase
 {
     protected static $client;
+    /** @var ContainerInterface */
     protected $container;
+    /** @var EntityManager */
     protected $entityManager;
     /** @var ResourceAccessManager $RAManager */
     protected $RAManager;
+    /** @var ResourceAccessRepository */
+    protected $resourceAccessRepository;
 
     public static function setUpBeforeClass()
     {
@@ -57,37 +60,14 @@ class TestBase extends WebTestCase
 
     public function setUp()
     {
-        $this->container = static::createClient()->getContainer();
-        $this->RAManager = $this->container->get('resource_access_manager');
-
-        /** @var Registry $doctrine */
-        $doctrine = $this->container->get('doctrine');
-        /** @var ContainerAwareEventManager $evm */
-        $evm = $doctrine->getManager()->getEventManager();
-
-        $listeners = $evm->getListeners();
-
-        foreach($listeners['loadClassMetadata'] as $listener) {
-            if($listener instanceof ResolveTargetEntityListener) {
-                $evm->removeEventListener('loadClassMetadata', $listener);
-            }
-        }
-
-        $listeners = $evm->getListeners();
-
-        $this->entityManager = $doctrine->getManager();
+        $this->container                = static::createClient()->getContainer();
+        $this->RAManager                = $this->container->get('resource_access_manager');
+        $this->entityManager            = $this->container->get('doctrine')->getManager();
+        $this->resourceAccessRepository = $this->entityManager->getRepository("ATResourceAccessBundle:ResourceAccess");
     }
 
     public function tearDown()
     {
-        $this->container->get('doctrine')->getManager()->clear();
-    }
-
-    /**
-     * @return Registry
-     */
-    public function getDoctrine()
-    {
-        return $this->container->get('doctrine');
+        $this->entityManager->clear();
     }
 }

@@ -12,14 +12,14 @@
 
 namespace AT\ResourceAccessBundle\Util;
 
-class RoleNode 
+class RoleNode
 {
     protected $parent;
     protected $value;
 
     public function __construct($value, $parent = null)
     {
-        $this->value = $value;
+        $this->value  = $value;
         $this->parent = $parent;
     }
 

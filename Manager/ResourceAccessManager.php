@@ -33,8 +33,8 @@ class ResourceAccessManager
 
     public function __construct(EntityManager $entityManager, SecurityContextInterface $securityContext)
     {
-        $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository("ATResourceAccessBundle:ResourceAccess");
+        $this->entityManager   = $entityManager;
+        $this->repository      = $entityManager->getRepository("ATResourceAccessBundle:ResourceAccess");
         $this->securityContext = $securityContext;
     }
 
@@ -163,8 +163,7 @@ class ResourceAccessManager
             $resourceAccess
                 ->setRequester($requester)
                 ->setResource($resource)
-                ->setAccessLevels($accessLevels)
-            ;
+                ->setAccessLevels($accessLevels);
 
             if (null !== $grantedBy) {
                 $resourceAccess->setGrantedBy($grantedBy);
