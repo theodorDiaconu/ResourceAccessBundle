@@ -1,15 +1,31 @@
 <?php
 
+/*
+ * This file is part of the ResourceAccessBundle.
+ *
+ * (c) Theodor Diaconu <diaconu.theodor@gmail.com>
+ * (c) Alexandru Miron <beliveyourdream@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace AT\ResourceAccessBundle\Tests;
 
+use Doctrine\Common\EventManager;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\ResolveTargetEntityListener;
+use Symfony\Bridge\Doctrine\ContainerAwareEventManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\DBAL\Driver\Connection;
 
 class TestBase extends WebTestCase
 {
     protected static $client;
     protected $container;
+    protected $entityManager;
+    /** @var ResourceAccessManager $RAManager */
+    protected $RAManager;
 
     public static function setUpBeforeClass()
     {
@@ -42,6 +58,24 @@ class TestBase extends WebTestCase
     public function setUp()
     {
         $this->container = static::createClient()->getContainer();
+        $this->RAManager = $this->container->get('resource_access_manager');
+
+        /** @var Registry $doctrine */
+        $doctrine = $this->container->get('doctrine');
+        /** @var ContainerAwareEventManager $evm */
+        $evm = $doctrine->getManager()->getEventManager();
+
+        $listeners = $evm->getListeners();
+
+        foreach($listeners['loadClassMetadata'] as $listener) {
+            if($listener instanceof ResolveTargetEntityListener) {
+                $evm->removeEventListener('loadClassMetadata', $listener);
+            }
+        }
+
+        $listeners = $evm->getListeners();
+
+        $this->entityManager = $doctrine->getManager();
     }
 
     public function tearDown()

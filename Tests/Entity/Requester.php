@@ -1,11 +1,16 @@
 <?php
 
-/**
- * @author Theodor Diaconu <diaconu.theodor@gmail.com>
- * @author Alexandru Miron <beliveyourdream@gmail.com>
+/*
+ * This file is part of the ResourceAccessBundle.
+ *
+ * (c) Theodor Diaconu <diaconu.theodor@gmail.com>
+ * (c) Alexandru Miron <beliveyourdream@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-namespace AT\ResourceAccessBundle\Entity;
+namespace AT\ResourceAccessBundle\Tests\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -14,7 +19,7 @@ use AT\ResourceAccessBundle\Model\RequesterInterface;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="requesters")
+ * @ORM\Table(name="at_requesters")
  */
 class Requester implements RequesterInterface
 {
@@ -26,12 +31,12 @@ class Requester implements RequesterInterface
     protected $id;
 
     /**
-     * @ORM\OneToMany(targetEntity="ResourceAccess", mappedBy="requester", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="AT\ResourceAccessBundle\Entity\ResourceAccess", mappedBy="requester", cascade={"persist", "remove"})
      */
     protected $resourceAccesses;
 
     /**
-     * @ORM\OneToMany(targetEntity="ResourceAccess", mappedBy="grantedBy", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="AT\ResourceAccessBundle\Entity\ResourceAccess", mappedBy="grantedBy", cascade={"persist", "remove"})
      */
     protected $grants;
 

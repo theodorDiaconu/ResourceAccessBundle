@@ -1,8 +1,13 @@
 <?php
 
-/**
- * @author Theodor Diaconu <diaconu.theodor@gmail.com>
- * @author Alexandru Miron <beliveyourdream@gmail.com>
+/*
+ * This file is part of the ResourceAccessBundle.
+ *
+ * (c) Theodor Diaconu <diaconu.theodor@gmail.com>
+ * (c) Alexandru Miron <beliveyourdream@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace AT\ResourceAccessBundle\Entity;
@@ -10,29 +15,15 @@ namespace AT\ResourceAccessBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use AT\ResourceAccessBundle\Entity\Resource;
-use AT\ResourceAccessBundle\Entity\Requester;
 use AT\ResourceAccessBundle\Model\ResourceInterface;
 use AT\ResourceAccessBundle\Model\RequesterInterface;
 
 /**
  * @ORM\Entity(repositoryClass="AT\ResourceAccessBundle\Repository\ResourceAccessRepository")
- * @ORM\Table(name="resource_accesses")
+ * @ORM\Table(name="at_resource_accesses")
  */
 class ResourceAccess
 {
-    const ACCESS_SUPER_ADMIN = 1;
-    const ACCESS_ADMIN_1 = 11;
-    const ACCESS_ADMIN_2 = 12;
-    const ACCESS_MODERATOR_1 = 111;
-    const ACCESS_MODERATOR_2 = 121;
-    const ACCESS_REVIEWER_2 = 122;
-    const ACCESS_EDIT_1 = 1111;
-    const ACCESS_READ_1 = 1112;
-    const ACCESS_EDIT_2 = 1211;
-    const ACCESS_READ_2 = 1212;
-    const ACCESS_EDIT_REVIEW = 1221;
-    const ACCESS_READ_REVIEW = 1222;
-
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -109,7 +100,7 @@ class ResourceAccess
     }
 
     /**
-     * @return Requester
+     * @return RequesterInterface
      */
     public function getRequester()
     {
