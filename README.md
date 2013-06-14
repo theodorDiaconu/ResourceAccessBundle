@@ -54,7 +54,7 @@ public function registerBundles()
 <?php
 // src/Acme/UserBundle/Entity/User.php
 
-namespace Acme/UserBundle/Entity/User
+namespace Acme/UserBundle/Entity
 
 // ...
 use AT\ResourceAccessBundle\Model\RequesterInterface;
@@ -71,7 +71,7 @@ class User implements RequesterInterface
 <?php
 // src/Acme/YourBundle/Entity/MyResource.php
 
-namespace Acme\YourBundle\Entity\MyResource
+namespace Acme\YourBundle\Entity\
 
 use Doctrine\ORM\Mapping as ORM;
 use AT\ResourceAccessBundle\Entity\Resource;
@@ -107,28 +107,6 @@ class MyResource implements ResourceInterface
         return $this->resource;
     }
 
-    /**
-     * Here you construct your role hierarchy following this model.
-     * You can have multiple hierarchies if needed but you must have a role that owns everything like our ROLE_ADMIN
-     *
-     * @return []
-     */
-    public function getRoleHierarchy()
-    {
-        $roleHierarchy = [
-            'ROLE_ADMIN' => [
-                'ROLE_EDIT_1' => [
-                    'ROLE_READ_1'
-                ],
-                'ROLE_EDIT_2' => [
-                    'ROLE_READ_2'
-                ]
-            ]
-        ];
-
-        return $roleHierarchy;
-    }
-
     // ...
 ```
 
@@ -137,6 +115,32 @@ class MyResource implements ResourceInterface
 ``` bash
 ~ php app/console doctrine:schema:update --force
 ```
+
+### Step 7: Define your role hierarchy for each resource class in config.yml like this:
+
+``` yaml
+at_resource_access:
+    resources:
+        Acme/YourBundle/Entity/MyResource:
+            role_hierarchy:
+                ROLE_ADMIN: [ ROLE_EDIT ]
+                ROLE_EDIT:  [ ROLE_READ ]
+```
+
+##### Note
+The first role ( in this case ROLE_ADMIN ) will be considered the master role and it will have access over any other role defined.
+If you would add another parent role like this :
+
+``` yaml
+Acme/YourBundle/Entity/MyResource:
+    role_hierarchy:
+        ROLE_ADMIN:     [ ROLE_EDIT ]
+        ROLE_EDIT:      [ ROLE_READ ]
+        ROLE_REVIEW:    [ ROLE_READ_REVIEW, ROLE_EDIT_REVIEW ]
+```
+
+The ROLE_REVIEW will be considered a child of ROLE_ADMIN even though you didn't define it like this,
+so always make sure your roles are related between them to eliminate any possible confusions.
 
 ## How to use the ResourceAccessBundle
 

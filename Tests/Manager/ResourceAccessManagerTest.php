@@ -176,8 +176,8 @@ class ResourceAccessManagerTest extends TestBase
         $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_EDIT_1, $resource, $requester));
         $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_EDIT_2, $resource, $requester));
         $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_EDIT_REVIEW, $resource, $requester));
-        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_1, $resource, $requester));
         $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_READ_2, $resource, $requester));
+        $this->assertFalse($this->RAManager->isGranted(Roles::ACCESS_READ_1, $resource, $requester));
         $this->assertTrue($this->RAManager->isGranted(Roles::ACCESS_READ_REVIEW, $resource, $requester));
 
         $resourceAccess->setAccessLevels([Roles::ACCESS_REVIEWER_2]);

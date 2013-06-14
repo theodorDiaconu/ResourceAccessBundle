@@ -89,35 +89,4 @@ class Resource implements ResourceInterface
     {
         return $this;
     }
-
-    /**
-     * @return array
-     */
-    public function getRoleHierarchy()
-    {
-        $roleHierarchy = [
-            Roles::ACCESS_SUPER_ADMIN => [
-                Roles::ACCESS_ADMIN_1 => [
-                    Roles::ACCESS_MODERATOR_1 => [
-                        Roles::ACCESS_EDIT_1 => [
-                            Roles::ACCESS_READ_1
-                        ]
-                    ]
-                ],
-                Roles::ACCESS_ADMIN_2 => [
-                    Roles::ACCESS_MODERATOR_2 => [
-                        Roles::ACCESS_EDIT_2 => [
-                            Roles::ACCESS_READ_2
-                        ]
-                    ],
-                    Roles::ACCESS_REVIEWER_2  => [
-                        Roles::ACCESS_EDIT_REVIEW,
-                        Roles::ACCESS_READ_REVIEW
-                    ]
-                ]
-            ]
-        ];
-
-        return $roleHierarchy;
-    }
 }

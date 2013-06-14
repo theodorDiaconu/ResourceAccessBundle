@@ -16,6 +16,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
+use AT\ResourceAccessBundle\Manager\ResourceAccessManager;
+use AT\ResourceAccessBundle\Tests\Model\Roles;
 use AT\ResourceAccessBundle\Repository\ResourceAccessRepository;
 
 class TestBase extends WebTestCase
@@ -61,13 +63,50 @@ class TestBase extends WebTestCase
     public function setUp()
     {
         $this->container                = static::createClient()->getContainer();
-        $this->RAManager                = $this->container->get('resource_access_manager');
         $this->entityManager            = $this->container->get('doctrine')->getManager();
         $this->resourceAccessRepository = $this->entityManager->getRepository("ATResourceAccessBundle:ResourceAccess");
+        $roleHierarchies                = $this->getRoles();
+        $this->RAManager                = new ResourceAccessManager($this->entityManager, $this->container->get('security.context'), $roleHierarchies, $this->container->getParameter('kernel.cache_dir'));
+        $this->RAManager->load($this->container->getParameter('kernel.cache_dir'), $roleHierarchies, true);
     }
 
     public function tearDown()
     {
         $this->entityManager->clear();
+    }
+
+    public function getRoles()
+    {
+        return ['AT\ResourceAccessBundle\Entity\Resource' => [
+            'role_hierarchy' => [
+                Roles::ACCESS_SUPER_ADMIN => [
+                    Roles::ACCESS_ADMIN_1,
+                    Roles::ACCESS_ADMIN_2
+                ],
+                Roles::ACCESS_ADMIN_1     => [
+                    Roles::ACCESS_MODERATOR_1
+                ],
+                Roles::ACCESS_MODERATOR_1 => [
+                    Roles::ACCESS_EDIT_1
+                ],
+                Roles::ACCESS_EDIT_1      => [
+                    Roles::ACCESS_READ_1
+                ],
+                Roles::ACCESS_ADMIN_2     => [
+                    Roles::ACCESS_MODERATOR_2,
+                    Roles::ACCESS_REVIEWER_2
+                ],
+                Roles::ACCESS_MODERATOR_2 => [
+                    Roles::ACCESS_EDIT_2
+                ],
+                Roles::ACCESS_EDIT_2      => [
+                    Roles::ACCESS_READ_2
+                ],
+                Roles::ACCESS_REVIEWER_2  => [
+                    Roles::ACCESS_READ_REVIEW,
+                    Roles::ACCESS_EDIT_REVIEW
+                ]
+            ]
+        ]];
     }
 }

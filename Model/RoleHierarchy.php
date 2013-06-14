@@ -12,7 +12,7 @@
 
 namespace AT\ResourceAccessBundle\Model;
 
-use AT\ResourceAccessBundle\Util\RoleNode;
+use AT\ResourceAccessBundle\Model\RoleNode;
 
 class RoleHierarchy
 {
@@ -31,6 +31,22 @@ class RoleHierarchy
         $this->children = $children;
     }
 
+    /**
+     * @return string
+     */
+    public function getRootValue()
+    {
+        return $this->root->getValue();
+    }
+
+    /**
+     * This checks if the $role argument is in a higher position than the $target argument in the role hierarchy
+     *
+     * @param string $role
+     * @param string $target
+     *
+     * @return boolean
+     */
     public function isRoleParentOf($role, $target)
     {
         if ($target == $role) {

@@ -1,4 +1,14 @@
 services:
     resource_access_manager:
         class: AT\ResourceAccessBundle\Manager\ResourceAccessManager
-        arguments: [ @doctrine.orm.entity_manager, @security.context ]
+        arguments:
+            entityManager: @doctrine.orm.entity_manager
+            securityContext: @security.context
+            roleHierarchies: %at_resource_access.role_hierarchy%
+            cacheDir: %kernel.cache_dir%
+
+    role_hierarchy_cache_warmer:
+        class: AT\ResourceAccessBundle\Cache\RoleHierarchyCacheWarmer
+        arguments: [ %at_resource_access.role_hierarchy% ]
+        tags:
+            - { name: kernel.cache_warmer }

@@ -10,7 +10,7 @@
  * file that was distributed with this source code.
  */
 
-namespace AT\ResourceAccessBundle\Util;
+namespace AT\ResourceAccessBundle\Model;
 
 class RoleNode
 {

@@ -20,7 +20,23 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode    = $treeBuilder->root('app');
+        $rootNode    = $treeBuilder->root('at_resource_access');
+        $rootNode
+            ->children()
+                ->arrayNode('resources')
+                    ->useAttributeAsKey('entity')
+                    ->prototype('array')
+                        ->children()
+                            ->arrayNode('role_hierarchy')
+                                ->prototype('array')
+                                    ->prototype('scalar')->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
 
         return $treeBuilder;
     }
