@@ -10,16 +10,16 @@
  * file that was distributed with this source code.
  */
 
-namespace AT\ResourceAccessBundle\Util;
+namespace AT\ResourceAccessBundle\Model;
 
-class RoleNode 
+class RoleNode
 {
     protected $parent;
     protected $value;
 
     public function __construct($value, $parent = null)
     {
-        $this->value = $value;
+        $this->value  = $value;
         $this->parent = $parent;
     }
 

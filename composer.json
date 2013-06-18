@@ -14,12 +14,14 @@
         }
     ],
     "minimum-stability": "dev",
-    "require" : {
+    "require": {
         "php": ">=5.4",
         "symfony/framework-bundle": "~2.2"
     },
     "autoload": {
-        "psr-0": { "AT\\ResourceAccessBundle": "" }
+        "psr-0": {
+            "AT\\ResourceAccessBundle": ""
+        }
     },
     "target-dir": "AT/ResourceAccessBundle"
 }

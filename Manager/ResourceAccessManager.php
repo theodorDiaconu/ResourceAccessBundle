@@ -16,11 +16,12 @@ use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Validator\Exception\InvalidArgumentException;
 use Doctrine\ORM\EntityManager;
-use AT\ResourceAccessBundle\Util\RoleHierarchyBuilder;
+use AT\ResourceAccessBundle\Model\RoleHierarchyBuilder;
 use AT\ResourceAccessBundle\Repository\ResourceAccessRepository;
 use AT\ResourceAccessBundle\Model\RequesterInterface;
 use AT\ResourceAccessBundle\Model\ResourceInterface;
 use AT\ResourceAccessBundle\Entity\ResourceAccess;
+use AT\ResourceAccessBundle\Model\RoleHierarchyContainer;
 
 class ResourceAccessManager
 {
@@ -30,12 +31,38 @@ class ResourceAccessManager
     private $repository;
     /** @var SecurityContextInterface */
     private $securityContext;
+    /** @var RoleHierarchyContainer */
+    private $roleHierarchyContainer;
 
-    public function __construct(EntityManager $entityManager, SecurityContextInterface $securityContext)
+    public function __construct(EntityManager $entityManager, SecurityContextInterface $securityContext, $roleHierarchies, $cacheDir)
     {
-        $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository("ATResourceAccessBundle:ResourceAccess");
+        $this->entityManager   = $entityManager;
+        $this->repository      = $entityManager->getRepository("ATResourceAccessBundle:ResourceAccess");
         $this->securityContext = $securityContext;
+
+        $this->load($cacheDir, $roleHierarchies);
+    }
+
+    /**
+     * This checks if the roleHierarchyContainer exists in the cache.
+     * If not we will create it.
+     *
+     * The $forceLoad parameter is used for tests so we can override the roles from the config.yml file
+     *
+     * @param $cacheDir
+     * @param $roleHierarchies
+     * @param bool $forceLoad
+     */
+    public function load($cacheDir, $roleHierarchies, $forceLoad = false)
+    {
+        $cachePath                    = $cacheDir . RoleHierarchyContainer::CACHE_PATH;
+        $cachedRoleHierarchyContainer = unserialize(file_get_contents($cachePath));
+
+        if (!$forceLoad && $cachedRoleHierarchyContainer instanceof RoleHierarchyContainer) {
+            $this->roleHierarchyContainer = $cachedRoleHierarchyContainer;
+        } else {
+            $this->roleHierarchyContainer = new RoleHierarchyContainer($roleHierarchies);
+        }
     }
 
     public function flush()
@@ -113,14 +140,13 @@ class ResourceAccessManager
 
         /** @var ResourceInterface $resource */
         $resource = $customResource->getResource();
-
         $accesses = $this->repository->getAccessLevels($requester, $resource);
 
         if (null == $accesses) {
             return false;
         }
 
-        $roleHierarchy = RoleHierarchyBuilder::build($resource->getRoleHierarchy());
+        $roleHierarchy = $this->roleHierarchyContainer->get(get_class($customResource));
 
         foreach ($accesses as $access) {
             $hasAccess = $roleHierarchy->isRoleParentOf($access, $accessLevel);
@@ -145,11 +171,9 @@ class ResourceAccessManager
     public function grantAccess(RequesterInterface $requester, ResourceInterface $customResource, $accessLevels = [], RequesterInterface $grantedBy = null)
     {
         /** @var ResourceInterface $resource */
-        $resource = $customResource->getResource();
-
-        $roleHierarchy = $resource->getRoleHierarchy();
-        reset($roleHierarchy);
-        $superAdminValue = key($roleHierarchy);
+        $resource        = $customResource->getResource();
+        $roleHierarchy   = $this->roleHierarchyContainer->get(get_class($customResource));
+        $superAdminValue = $roleHierarchy->getRootValue();
 
         if (null !== $grantedBy && !$this->isGranted($superAdminValue, $resource, $grantedBy)) {
             throw(new InvalidArgumentException('The user with id ' . $grantedBy->getId() . ' is not allowed to grant access'));
@@ -163,8 +187,7 @@ class ResourceAccessManager
             $resourceAccess
                 ->setRequester($requester)
                 ->setResource($resource)
-                ->setAccessLevels($accessLevels)
-            ;
+                ->setAccessLevels($accessLevels);
 
             if (null !== $grantedBy) {
                 $resourceAccess->setGrantedBy($grantedBy);
@@ -190,8 +213,7 @@ class ResourceAccessManager
      */
     public function updateAccessLevels(RequesterInterface $requester, ResourceInterface $customResource, $accessLevels = [], RequesterInterface $grantedBy = null)
     {
-        $resource = $customResource->getResource();
-
+        $resource       = $customResource->getResource();
         /** @var ResourceAccess $resourceAccess */
         $resourceAccess = $this->repository->findOneBy(['requester' => $requester, 'resource' => $resource]);
 
@@ -200,6 +222,7 @@ class ResourceAccessManager
         }
 
         $resourceAccess->setAccessLevels($accessLevels);
+
         if (null !== $grantedBy) {
             $resourceAccess->setGrantedBy($grantedBy);
         }
@@ -218,8 +241,7 @@ class ResourceAccessManager
      */
     public function removeAccessLevels(RequesterInterface $requester, ResourceInterface $customResource, $accessLevels = [])
     {
-        $resource = $customResource->getResource();
-
+        $resource       = $customResource->getResource();
         /** @var ResourceAccess $resourceAccess */
         $resourceAccess = $this->repository->findOneBy(['requester' => $requester, 'resource' => $resource]);
 

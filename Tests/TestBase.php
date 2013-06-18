@@ -12,20 +12,25 @@
 
 namespace AT\ResourceAccessBundle\Tests;
 
-use Doctrine\Common\EventManager;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Tools\ResolveTargetEntityListener;
-use Symfony\Bridge\Doctrine\ContainerAwareEventManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
+use AT\ResourceAccessBundle\Manager\ResourceAccessManager;
+use AT\ResourceAccessBundle\Tests\Model\Roles;
+use AT\ResourceAccessBundle\Repository\ResourceAccessRepository;
 
 class TestBase extends WebTestCase
 {
     protected static $client;
+    /** @var ContainerInterface */
     protected $container;
+    /** @var EntityManager */
     protected $entityManager;
     /** @var ResourceAccessManager $RAManager */
     protected $RAManager;
+    /** @var ResourceAccessRepository */
+    protected $resourceAccessRepository;
 
     public static function setUpBeforeClass()
     {
@@ -57,37 +62,51 @@ class TestBase extends WebTestCase
 
     public function setUp()
     {
-        $this->container = static::createClient()->getContainer();
-        $this->RAManager = $this->container->get('resource_access_manager');
-
-        /** @var Registry $doctrine */
-        $doctrine = $this->container->get('doctrine');
-        /** @var ContainerAwareEventManager $evm */
-        $evm = $doctrine->getManager()->getEventManager();
-
-        $listeners = $evm->getListeners();
-
-        foreach($listeners['loadClassMetadata'] as $listener) {
-            if($listener instanceof ResolveTargetEntityListener) {
-                $evm->removeEventListener('loadClassMetadata', $listener);
-            }
-        }
-
-        $listeners = $evm->getListeners();
-
-        $this->entityManager = $doctrine->getManager();
+        $this->container                = static::createClient()->getContainer();
+        $this->entityManager            = $this->container->get('doctrine')->getManager();
+        $this->resourceAccessRepository = $this->entityManager->getRepository("ATResourceAccessBundle:ResourceAccess");
+        $roleHierarchies                = $this->getRoles();
+        $this->RAManager                = new ResourceAccessManager($this->entityManager, $this->container->get('security.context'), $roleHierarchies, $this->container->getParameter('kernel.cache_dir'));
+        $this->RAManager->load($this->container->getParameter('kernel.cache_dir'), $roleHierarchies, true);
     }
 
     public function tearDown()
     {
-        $this->container->get('doctrine')->getManager()->clear();
+        $this->entityManager->clear();
     }
 
-    /**
-     * @return Registry
-     */
-    public function getDoctrine()
+    public function getRoles()
     {
-        return $this->container->get('doctrine');
+        return ['AT\ResourceAccessBundle\Entity\Resource' => [
+            'role_hierarchy' => [
+                Roles::ACCESS_SUPER_ADMIN => [
+                    Roles::ACCESS_ADMIN_1,
+                    Roles::ACCESS_ADMIN_2
+                ],
+                Roles::ACCESS_ADMIN_1     => [
+                    Roles::ACCESS_MODERATOR_1
+                ],
+                Roles::ACCESS_MODERATOR_1 => [
+                    Roles::ACCESS_EDIT_1
+                ],
+                Roles::ACCESS_EDIT_1      => [
+                    Roles::ACCESS_READ_1
+                ],
+                Roles::ACCESS_ADMIN_2     => [
+                    Roles::ACCESS_MODERATOR_2,
+                    Roles::ACCESS_REVIEWER_2
+                ],
+                Roles::ACCESS_MODERATOR_2 => [
+                    Roles::ACCESS_EDIT_2
+                ],
+                Roles::ACCESS_EDIT_2      => [
+                    Roles::ACCESS_READ_2
+                ],
+                Roles::ACCESS_REVIEWER_2  => [
+                    Roles::ACCESS_READ_REVIEW,
+                    Roles::ACCESS_EDIT_REVIEW
+                ]
+            ]
+        ]];
     }
 }
