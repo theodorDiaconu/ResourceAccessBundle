@@ -86,7 +86,7 @@ class MyResource implements ResourceInterface
     // ...
 
     /**
-     * @ORM\OneToOne(targetEntity="AT\ResourceAccessBundle\Entity\Resource")
+     * @ORM\OneToOne(targetEntity="AT\ResourceAccessBundle\Entity\Resource", cascade={"persist"})
      */
     protected $resource;
 
