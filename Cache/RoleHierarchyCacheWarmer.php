@@ -42,7 +42,7 @@ class RoleHierarchyCacheWarmer extends CacheWarmer
             mkdir($cachePath);
         }
 
-        $this->writeCacheFile(RoleHierarchyContainer::CACHE_PATH, $serialized);
+        $this->writeCacheFile($cacheDir . RoleHierarchyContainer::CACHE_PATH, $serialized);
     }
 
     /**
