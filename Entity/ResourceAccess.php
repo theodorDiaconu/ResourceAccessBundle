@@ -32,7 +32,7 @@ class ResourceAccess
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Resource", inversedBy="resourceAccesses", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="Resource", inversedBy="resourceAccesses")
      * @ORM\JoinColumn(name="resource_id", referencedColumnName="id", nullable=false)
      */
     protected $resource;

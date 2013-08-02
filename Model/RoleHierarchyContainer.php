@@ -49,6 +49,10 @@ class RoleHierarchyContainer
      */
     public function get($className)
     {
+        if (substr($className, 0, 14) == 'Proxies\__CG__') {
+            $className = substr($className, 15);
+        }
+
         return $this->_elements[$className];
     }
 }
