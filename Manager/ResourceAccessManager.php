@@ -172,12 +172,6 @@ class ResourceAccessManager
     {
         /** @var ResourceInterface $resource */
         $resource        = $customResource->getResource();
-        $roleHierarchy   = $this->roleHierarchyContainer->get(get_class($customResource));
-        $superAdminValue = $roleHierarchy->getRootValue();
-
-        if (null !== $grantedBy && !$this->isGranted($superAdminValue, $resource, $grantedBy)) {
-            throw(new InvalidArgumentException('The user with id ' . $grantedBy->getId() . ' is not allowed to grant access'));
-        }
 
         /** @var ResourceAccess $resourceAccess */
         $resourceAccess = $this->repository->findOneBy(['requester' => $requester, 'resource' => $resource]);
@@ -209,7 +203,7 @@ class ResourceAccessManager
      * @param array $accessLevels
      * @param RequesterInterface $grantedBy
      *
-     * @throws \Exception
+     * @throws \Symfony\Component\Validator\Exception\InvalidArgumentException
      */
     public function updateAccessLevels(RequesterInterface $requester, ResourceInterface $customResource, $accessLevels = [], RequesterInterface $grantedBy = null)
     {
