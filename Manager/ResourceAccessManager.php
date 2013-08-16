@@ -168,8 +168,12 @@ class ResourceAccessManager
      *
      * @throws \Symfony\Component\Validator\Exception\InvalidArgumentException
      */
-    public function grantAccess(RequesterInterface $requester, ResourceInterface $customResource, $accessLevels = [], RequesterInterface $grantedBy = null)
+    public function grantAccess(RequesterInterface $requester, ResourceInterface $customResource, $accessLevels, RequesterInterface $grantedBy = null)
     {
+        if (!is_array($accessLevels)) {
+            $accessLevels = array($accessLevels);
+        }
+
         /** @var ResourceInterface $resource */
         $resource        = $customResource->getResource();
 
