@@ -262,7 +262,7 @@ class ResourceAccessManager
     public function removeAccess(RequesterInterface $requester, ResourceInterface $resource)
     {
         /** @var ResourceAccess $resourceAccess */
-        $resourceAccess = $this->repository->findOneBy(['requester' => $requester, 'resource' => $resource]);
+        $resourceAccess = $this->repository->findOneBy(['requester' => $requester, 'resource' => $resource->getResource()]);
 
         if (null === $resourceAccess) {
             throw(new InvalidArgumentException('The user with id ' . $requester->getId() . ' already has no access.'));
