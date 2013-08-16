@@ -166,9 +166,9 @@ class ResourceAccessManager
      * @param array $accessLevels
      * @param RequesterInterface $grantedBy
      *
-     * @throws \Symfony\Component\Validator\Exception\InvalidArgumentException
+     * @param bool $override
      */
-    public function grantAccess(RequesterInterface $requester, ResourceInterface $customResource, $accessLevels, RequesterInterface $grantedBy = null)
+    public function grantAccess(RequesterInterface $requester, ResourceInterface $customResource, $accessLevels, RequesterInterface $grantedBy = null, $override = false)
     {
         if (!is_array($accessLevels)) {
             $accessLevels = array($accessLevels);
@@ -193,6 +193,9 @@ class ResourceAccessManager
 
             $this->save($resourceAccess);
         } else {
+            if ($override) {
+                $resourceAccess->setAccessLevels([]);
+            }
             $resourceAccess->addAccessLevels($accessLevels);
 
             $this->update($resourceAccess);
